@@ -8,7 +8,7 @@ using UOP.Domain.Models;
 
 namespace UOP.Domain.Interfaces
 {
-    public interface IGenericInterface<TEntity, TCreateEntityDto, TEntityDto, TPrimaryKey>
+    public interface IGenericService<TEntity, TCreateEntityDto, TEntityDto, TPrimaryKey>
         where TEntity : class, new()
         where TCreateEntityDto : class, new()
         where TEntityDto : class, new()
