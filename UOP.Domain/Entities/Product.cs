@@ -3,12 +3,14 @@ using UOP.Domain.Interfaces;
 
 namespace UOP.Domain.Entities
 {
-    public class Category : IAuditEntity<Guid>
+    public class Product : IAuditEntity<Guid>
     {
         [NotMapped]
-        public Guid Id { get => CategoryId; set => CategoryId = value; }
+        public Guid Id { get => ProductId; set => ProductId = value; }
 
-        public Guid CategoryId { get; set; }
+        public Guid ProductId { get; set; }
+        
+        public Guid? CategoryId { get; set; }
         
         public string CreatedBy { get; set; }
         
@@ -26,18 +28,10 @@ namespace UOP.Domain.Entities
 
         public string Order { get; set; }
         
-        public Guid? ParentId { get; set; }
-        
         public string? Description { get; set; }
         
         public bool IsActive { get; set; }
-        
-        public bool IsParent { get; set; }
-        
-        public string? IconUrl { get; set; }
-        
-        public virtual ICollection<Category>? SubCategories { get; set; } = [];
-        
-        public virtual ICollection<Product>? Products { get; set; } = [];
+                
+        public virtual Category? Category { get; set; }
     }
 }
