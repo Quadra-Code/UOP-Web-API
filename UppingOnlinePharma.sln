@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UOP.Infrastructure", "UOP.I
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UOP.Application", "UOP.Application\UOP.Application.csproj", "{8B8B7856-4991-4A48-8E47-8248F9AAD0E2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UOP.Web.API", "UOP.Web.API\UOP.Web.API.csproj", "{00A509FB-840B-48CB-9BBA-980731AB4B9C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{8B8B7856-4991-4A48-8E47-8248F9AAD0E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B8B7856-4991-4A48-8E47-8248F9AAD0E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B8B7856-4991-4A48-8E47-8248F9AAD0E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00A509FB-840B-48CB-9BBA-980731AB4B9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00A509FB-840B-48CB-9BBA-980731AB4B9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00A509FB-840B-48CB-9BBA-980731AB4B9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00A509FB-840B-48CB-9BBA-980731AB4B9C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
