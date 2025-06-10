@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UOP.Domain", "UOP.Domain\UO
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UOP.Infrastructure", "UOP.Infrastructure\UOP.Infrastructure.csproj", "{465DC583-F4E3-46BD-8559-32E1B63B128A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UOP.Application", "UOP.Application\UOP.Application.csproj", "{8B8B7856-4991-4A48-8E47-8248F9AAD0E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{465DC583-F4E3-46BD-8559-32E1B63B128A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{465DC583-F4E3-46BD-8559-32E1B63B128A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{465DC583-F4E3-46BD-8559-32E1B63B128A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B8B7856-4991-4A48-8E47-8248F9AAD0E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B8B7856-4991-4A48-8E47-8248F9AAD0E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B8B7856-4991-4A48-8E47-8248F9AAD0E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B8B7856-4991-4A48-8E47-8248F9AAD0E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 
 namespace UOP.Domain.Extensions
 {
-    public static class UUID7
+    public static class UuidV7
     {
         public static Guid NewGuid()
         {

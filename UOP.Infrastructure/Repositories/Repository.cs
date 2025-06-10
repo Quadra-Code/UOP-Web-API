@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System;
 using UOP.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using UOP.Infrastructure.Data;
 
 namespace UOP.Infrastructure.Repositories
 {

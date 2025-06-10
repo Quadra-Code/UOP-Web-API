@@ -18,6 +18,10 @@ namespace UOP.Infrastructure.Data
 
         public virtual DbSet<Category> Categories { get; set; }
 
+        public virtual DbSet<City> Cities { get; set; }
+
+        public virtual DbSet<Country> Countries { get; set; }
+
         public virtual DbSet<Permission> Permissions { get; set; }
 
         public virtual DbSet<PermissionType> PermissionTypes { get; set; }
