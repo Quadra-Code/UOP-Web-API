@@ -115,6 +115,7 @@ namespace UOP.Web.API
             //{
                 app.MapOpenApi();
                 app.MapScalarApiReference();
+                app.UseSwaggerUI(options => options.SwaggerEndpoint(url: "/openapi/v1.json", name: "V1"));
             //}
             app.UseHttpsRedirection();
             app.UseCors("Default");
