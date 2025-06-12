@@ -66,7 +66,7 @@ namespace UOP.Web.API
                 options.Conventions.Add(new DefaultProducesResponseTypeConvention());
             });
 
-            builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
+            builder.Services.AddIdentity<User, Role>(options =>
             {
                 options.SignIn.RequireConfirmedEmail = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireConfirmedEmail");
                 options.Password.RequireDigit = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireDigit");
@@ -76,7 +76,7 @@ namespace UOP.Web.API
                 options.Password.RequireLowercase = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireLowercase");
                 options.User.RequireUniqueEmail = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireUniqueEmail");
             })
-            .AddRoles<IdentityRole<int>>()
+            .AddRoles<Role>()
             .AddEntityFrameworkStores<AppDbContext>();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
