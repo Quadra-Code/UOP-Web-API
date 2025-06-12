@@ -9,7 +9,7 @@ using UOP.Domain.Entities;
 
 namespace UOP.Infrastructure.Data.Configurations
 {
-    internal class PhoneNumberConfiguration
+    internal class PhoneNumberConfiguration : IEntityTypeConfiguration<PhoneNumber>
     {
         public void Configure(EntityTypeBuilder<PhoneNumber> entity)
         {

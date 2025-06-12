@@ -11,7 +11,7 @@ namespace UOP.Web.API.Controllers
 {
     [ApiController]
     [Route("api/cities")]
-    [Authorize]
+    //[Authorize]
     public class CityController : ControllerBase
     {
         private readonly IGenericService<City, CreateCityDTO, CityDTO, Guid> _cityService;

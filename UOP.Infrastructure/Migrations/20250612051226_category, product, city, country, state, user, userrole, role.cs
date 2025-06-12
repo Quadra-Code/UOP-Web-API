@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace UOP.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class categoryproductcitycountrystateuseruserrole : Migration
+    public partial class categoryproductcitycountrystateuseruserrolerole : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -197,24 +197,25 @@ namespace UOP.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "PhoneNumber",
+                schema: "UserManagement",
                 columns: table => new
                 {
+                    PhoneNumberID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PhoneNumberId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     IsVerified = table.Column<bool>(type: "bit", nullable: false),
-                    Number = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Number = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PhoneNumber", x => x.Id);
+                    table.PrimaryKey("PK_Core.PhoneNumber", x => x.PhoneNumberID);
                     table.ForeignKey(
                         name: "FK_PhoneNumber_User",
                         column: x => x.UserId,
@@ -319,6 +320,7 @@ namespace UOP.Infrastructure.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_PhoneNumber_UserId",
+                schema: "UserManagement",
                 table: "PhoneNumber",
                 column: "UserId");
 
@@ -367,7 +369,8 @@ namespace UOP.Infrastructure.Migrations
                 schema: "Core");
 
             migrationBuilder.DropTable(
-                name: "PhoneNumber");
+                name: "PhoneNumber",
+                schema: "UserManagement");
 
             migrationBuilder.DropTable(
                 name: "Product",

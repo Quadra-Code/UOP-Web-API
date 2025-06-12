@@ -14,6 +14,8 @@ namespace UOP.Infrastructure
                 .AddJsonFile(Path.Combine(AppContext.BaseDirectory, "appsettings.json"))
                 .Build();
             var builder = new DbContextOptionsBuilder<AppDbContext>();
+            //var connectionString = configuration.GetConnectionString("LocalConnection");
+            //var connectionString = configuration.GetConnectionString("RemoteConnection");
             var connectionString = configuration.GetConnectionString("DefaultConnection");
             builder.UseSqlServer(connectionString);
             return new AppDbContext(builder.Options);

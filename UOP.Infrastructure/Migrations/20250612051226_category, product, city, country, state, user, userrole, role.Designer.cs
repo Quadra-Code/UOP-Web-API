@@ -12,8 +12,8 @@ using UOP.Infrastructure.Data;
 namespace UOP.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250612044507_category, product, city, country, state, user, userrole")]
-    partial class categoryproductcitycountrystateuseruserrole
+    [Migration("20250612051226_category, product, city, country, state, user, userrole, role")]
+    partial class categoryproductcitycountrystateuseruserrolerole
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -221,20 +221,25 @@ namespace UOP.Infrastructure.Migrations
 
             modelBuilder.Entity("UOP.Domain.Entities.PhoneNumber", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<Guid>("PhoneNumberId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("PhoneNumberID");
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -247,13 +252,12 @@ namespace UOP.Infrastructure.Migrations
 
                     b.Property<string>("Number")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("PhoneNumberId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
 
                     b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -261,11 +265,12 @@ namespace UOP.Infrastructure.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("Id");
+                    b.HasKey("PhoneNumberId")
+                        .HasName("PK_Core.PhoneNumber");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PhoneNumber");
+                    b.ToTable("PhoneNumber", "UserManagement");
                 });
 
             modelBuilder.Entity("UOP.Domain.Entities.Product", b =>

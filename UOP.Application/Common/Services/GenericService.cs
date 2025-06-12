@@ -1,5 +1,4 @@
 ﻿using Mapster;
-using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Linq.Expressions;
@@ -10,7 +9,7 @@ using UOP.Domain.Models;
 
 namespace UOP.Application.Common.Services
 {
-    public class GenericService<TEntity, TCreateEntityDto, TEntityDto, TPrimaryKey>(IRepository<TEntity, TPrimaryKey> repository, IUnitOfWork unitOfWork, IMapper mapper)
+    public class GenericService<TEntity, TCreateEntityDto, TEntityDto, TPrimaryKey>(IRepository<TEntity, TPrimaryKey> repository, IUnitOfWork unitOfWork)
         : IGenericService<TEntity, TCreateEntityDto, TEntityDto, TPrimaryKey>
     where TEntity : class, IEntity<TPrimaryKey>, new()
     where TEntityDto : class, new()
