@@ -15,11 +15,9 @@ namespace UOP.Web.API.Controllers
     public class CityController : ControllerBase
     {
         private readonly IGenericService<City, CreateCityDTO, CityDTO, Guid> _cityService;
-        private readonly IGenericService<State, CreateStateDTO, StateDTO, Guid> _stateService;
-        public CityController(IGenericService<City, CreateCityDTO, CityDTO, Guid> cityService, IGenericService<State, CreateStateDTO, StateDTO, Guid> stateService)
+        public CityController(IGenericService<City, CreateCityDTO, CityDTO, Guid> cityService)
         {
             _cityService = cityService;
-            _stateService = stateService;
         }
 
         [HttpGet]

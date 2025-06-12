@@ -4,38 +4,37 @@ using UOP.Domain.Entities;
 
 namespace UOP.Infrastructure.Data.Configurations
 {
-    public class CategoryConfiguration : IEntityTypeConfiguration<Category>
+    public class StateConfiguration : IEntityTypeConfiguration<State>
     {
-        public void Configure(EntityTypeBuilder<Category> entity)
+        public void Configure(EntityTypeBuilder<State> entity)
         {
-            entity.ToTable("Category", "Core");
-            entity.HasKey(e => e.CategoryId).HasName("PK_Core.Category");
-            entity.Property(e => e.CategoryId)
+            entity.ToTable("State", "Core");
+            entity.HasKey(e => e.StateId).HasName("PK_Core.State");
+            entity.Property(e => e.StateId)
                 .ValueGeneratedNever()
-                .HasColumnName("CategoryID");
+                .HasColumnName("StateID");
             entity.Property(e => e.CreatedDate).HasColumnType("datetime2");
             entity.Property(e => e.UpdatedDate).HasColumnType("datetime2");
             entity.Property(e => e.Name_Ar).HasMaxLength(100);
             entity.Property(e => e.Name_En).HasMaxLength(100);
             entity.Property(e => e.CreatedBy).HasMaxLength(100);
             entity.Property(e => e.UpdatedBy).HasMaxLength(100);
-            entity.Property(e => e.Description).HasMaxLength(800);
-            entity.Property(e => e.IconUrl).HasMaxLength(500);
             entity.Property(e => e.Order).HasMaxLength(10);
+            entity.Property(e => e.MapUrl).HasMaxLength(500);
             entity.Property(e => e.Order).HasColumnName("Order");
             entity.HasIndex(e => e.Order);
 
-            entity.HasOne<Category>()
-                .WithMany(c => c.SubCategories)
-                .HasForeignKey(c => c.ParentId)
+            entity.HasOne(c => c.Country)
+                .WithMany(c => c.States)
+                .HasForeignKey(c => c.CountryId)
                 .OnDelete(DeleteBehavior.Restrict)
-                .HasConstraintName("FK_Category_Self");
+                .HasConstraintName("FK_State_Country");
 
-            entity.HasMany(e => e.Products)
-                .WithOne(c => c.Category)
-                .HasForeignKey(c => c.CategoryId)
+            entity.HasMany(e => e.Cities)
+                .WithOne(c => c.State)
+                .HasForeignKey(c => c.StateId)
                 .OnDelete(DeleteBehavior.Restrict)
-                .HasConstraintName("FK_Product_Category");
+                .HasConstraintName("FK_City_State");
         }
     }
 }

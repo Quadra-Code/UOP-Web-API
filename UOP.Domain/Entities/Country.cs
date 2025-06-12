@@ -21,6 +21,8 @@ namespace UOP.Domain.Entities
 
         public string Code { get; set; } = null!;
 
+        public string Order { get; set; }
+
         public bool IsActive { get; set; }
 
         public string Currency { get; set; } = null!;

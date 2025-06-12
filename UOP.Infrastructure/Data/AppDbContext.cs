@@ -22,11 +22,14 @@ namespace UOP.Infrastructure.Data
 
         public virtual DbSet<Country> Countries { get; set; }
 
-        public virtual DbSet<Permission> Permissions { get; set; }
+        //public virtual DbSet<Permission> Permissions { get; set; }
 
-        public virtual DbSet<PermissionType> PermissionTypes { get; set; }
+        //public virtual DbSet<PermissionType> PermissionTypes { get; set; }
 
         public virtual DbSet<Category> Products { get; set; }
 
+        public virtual DbSet<User> Users { get; set; }
+
+        public virtual DbSet<UserRole> UsersRoles { get; set; }
     }
 }

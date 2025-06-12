@@ -1,7 +1,6 @@
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
@@ -9,6 +8,7 @@ using System.Text;
 using UOP.Application.Common.Interfaces;
 using UOP.Application.Common.Mappers;
 using UOP.Application.Common.Services;
+using UOP.Domain.Entities;
 using UOP.Domain.Interfaces;
 using UOP.Infrastructure.Data;
 using UOP.Infrastructure.Repositories;
@@ -66,19 +66,18 @@ namespace UOP.Web.API
                 options.Conventions.Add(new DefaultProducesResponseTypeConvention());
             });
 
-            //builder.Services.AddIdentity<CustomUser, IdentityRole<int>>(options =>
-            //{
-            //    options.SignIn.RequireConfirmedEmail = true;
-            //    options.Password.RequireDigit = true;
-            //    options.Password.RequiredLength = 6;
-            //    options.Password.RequireNonAlphanumeric = false;
-            //    options.Password.RequireUppercase = false;
-            //    options.Password.RequireLowercase = false;
-            //    options.User.RequireUniqueEmail = true;
-            //})
-            //    .AddRoles<IdentityRole<int>>()
-            //    .AddEntityFrameworkStores<AllBirdsContext>();
-
+            builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
+            {
+                options.SignIn.RequireConfirmedEmail = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireConfirmedEmail");
+                options.Password.RequireDigit = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireDigit");
+                options.Password.RequiredLength = builder.Configuration.GetValue<int>("PasswordRequirements:MinimumLength");
+                options.Password.RequireNonAlphanumeric = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireSpecialCharacter");
+                options.Password.RequireUppercase = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireUppercase");
+                options.Password.RequireLowercase = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireLowercase");
+                options.User.RequireUniqueEmail = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireUniqueEmail");
+            })
+            .AddRoles<IdentityRole<int>>()
+            .AddEntityFrameworkStores<AppDbContext>();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
@@ -98,6 +97,8 @@ namespace UOP.Web.API
             var envConnectString = Environment.GetEnvironmentVariable("SQLAZURECONNSTR_DefaultConnection");
             if (string.IsNullOrEmpty(envConnectString))
             {
+                //envConnectString = builder.Configuration.GetConnectionString("LocalConnection");
+                //envConnectString = builder.Configuration.GetConnectionString("RemoteConnection");
                 envConnectString = builder.Configuration.GetConnectionString("DefaultConnection");
             }
             builder.Services.AddDbContext<AppDbContext>(options =>

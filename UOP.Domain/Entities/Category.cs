@@ -17,7 +17,7 @@ namespace UOP.Domain.Entities
         public string? UpdatedBy { get; set; }
         
         public DateTime? UpdatedDate { get; set; }
-        
+
         public bool IsDeleted { get; set; }
 
         public string Name_Ar { get; set; }
@@ -29,10 +29,10 @@ namespace UOP.Domain.Entities
         public Guid? ParentId { get; set; }
         
         public string? Description { get; set; }
-        
-        public bool IsActive { get; set; }
-        
-        public bool IsParent { get; set; }
+
+        public bool IsActive { get; set; } = true;
+
+        public bool IsParent { get; set; } = false;
         
         public string? IconUrl { get; set; }
         
