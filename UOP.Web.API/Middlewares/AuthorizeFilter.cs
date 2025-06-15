@@ -28,20 +28,20 @@ namespace UOP.Web.API.Middlewares
                     foreach (var attribute in authorizeAttributes)
                     {
                         var requiredPermission = attribute.RequiredPermission;
-                        var userId = context.HttpContext.GetLocalUserId();
+                        //var userId = context.HttpContext.GetLocalUserId();
 
-                        if (!userId.HasValue)
-                        {
-                            context.Result = new UnauthorizedResult();
-                            return;
-                        }
+                        //if (!userId.HasValue)
+                        //{
+                        //    context.Result = new UnauthorizedResult();
+                        //    return;
+                        //}
 
-                        var hasPermission = await _permissionService.HasPermissionAsync(userId.Value, requiredPermission);
-                        if (!hasPermission)
-                        {
-                            context.Result = new UnauthorizedResult();
-                            return;
-                        }
+                        //var hasPermission = await _permissionService.HasPermissionAsync(userId.Value, requiredPermission);
+                        //if (!hasPermission)
+                        //{
+                        //    context.Result = new UnauthorizedResult();
+                        //    return;
+                        //}
                     }
                 }
             }

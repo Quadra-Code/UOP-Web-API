@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace UOP.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class categoryproductcitycountrystateuseruserrolerole : Migration
+    public partial class addcountrystatecitycategoryproductuseruserrolerole : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -80,7 +80,6 @@ namespace UOP.Infrastructure.Migrations
                 columns: table => new
                 {
                     RoleID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -102,7 +101,6 @@ namespace UOP.Infrastructure.Migrations
                 columns: table => new
                 {
                     UserID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
@@ -201,7 +199,6 @@ namespace UOP.Infrastructure.Migrations
                 columns: table => new
                 {
                     PhoneNumberID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -227,11 +224,10 @@ namespace UOP.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserRole",
-                schema: "Core",
+                schema: "UserManagement",
                 columns: table => new
                 {
                     UserRoleID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
@@ -350,13 +346,13 @@ namespace UOP.Infrastructure.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRole_RoleId",
-                schema: "Core",
+                schema: "UserManagement",
                 table: "UserRole",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRole_UserId",
-                schema: "Core",
+                schema: "UserManagement",
                 table: "UserRole",
                 column: "UserId");
         }
@@ -378,7 +374,7 @@ namespace UOP.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserRole",
-                schema: "Core");
+                schema: "UserManagement");
 
             migrationBuilder.DropTable(
                 name: "State",

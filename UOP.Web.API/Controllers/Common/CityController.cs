@@ -7,11 +7,11 @@ using UOP.Domain.Entities;
 using UOP.Domain.Interfaces;
 using UOP.Domain.Models;
 
-namespace UOP.Web.API.Controllers
+namespace UOP.Web.API.Controllers.Common
 {
     [ApiController]
     [Route("api/cities")]
-    //[Authorize]
+    [Authorize()]
     public class CityController : ControllerBase
     {
         private readonly IGenericService<City, CreateCityDTO, CityDTO, Guid> _cityService;
@@ -49,13 +49,18 @@ namespace UOP.Web.API.Controllers
         [HttpPost]
         public async Task<ActionResult<CityDTO>> Create([FromBody] CreateCityDTO cityDTO)
         {
-            var result = await _cityService.AddAsync(cityDTO);
-
-            if (!result.IsSuccess)
+            if (ModelState.IsValid)
             {
-                return BadRequest(result.Errors);
+                var result = await _cityService.AddAsync(cityDTO);
+
+                if (!result.IsSuccess)
+                {
+                    return BadRequest(result.Errors);
+                }
+                return StatusCode(201, result.Value);
             }
-            return StatusCode(201, result.Value);
+            var rr = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+            return BadRequest(rr);
         }
 
         [HttpPut("{id}")]
