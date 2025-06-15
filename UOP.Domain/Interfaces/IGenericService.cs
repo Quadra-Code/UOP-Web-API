@@ -8,14 +8,14 @@ using UOP.Domain.Models;
 
 namespace UOP.Domain.Interfaces
 {
-    public interface IGenericService<TEntity, TCreateEntityDto, TEntityDto, TPrimaryKey>
+    public interface IGenericService<TEntity, TCreateEntityDTO, TEntityDTO, TPrimaryKey>
         where TEntity : class, new()
-        where TCreateEntityDto : class, new()
-        where TEntityDto : class, new()
+        where TCreateEntityDTO : class, new()
+        where TEntityDTO : class, new()
         where TPrimaryKey : struct
     {
-        Result<IQueryable<TEntityDto>> GetAll(int pageNumber = 1, int pageSize = int.MaxValue, string orderBy = "Id", string orderDirection = "asc");
-        Result<IQueryable<TEntityDto>> GetByFilter(
+        Result<IQueryable<TEntityDTO>> GetAll(int pageNumber = 1, int pageSize = int.MaxValue, string orderBy = "Id", string orderDirection = "asc");
+        Result<IQueryable<TEntityDTO>> GetByFilter(
             Expression<Func<TEntity, bool>>? filter,
             int pageNumber = 1,
             int pageSize = int.MaxValue,
@@ -23,14 +23,14 @@ namespace UOP.Domain.Interfaces
             string orderDirection = "asc"
             );
 
-        Task<Result<PaginatedResponse<TEntityDto>>> GetAllAsync(
+        Task<Result<PaginatedResponse<TEntityDTO>>> GetAllAsync(
             int pageNumber = 1,
             int pageSize = int.MaxValue,
             string orderBy = "Id",
             string orderDirection = "asc",
             CancellationToken cancellationToken = default);
 
-        Task<Result<PaginatedResponse<TEntityDto>>> GetByFilterAsync(
+        Task<Result<PaginatedResponse<TEntityDTO>>> GetByFilterAsync(
             Expression<Func<TEntity, bool>>? filter,
             int pageNumber = 1,
             int pageSize = int.MaxValue,
@@ -38,9 +38,9 @@ namespace UOP.Domain.Interfaces
             string orderDirection = "asc",
             CancellationToken cancellationToken = default);
 
-        Task<Result<TEntityDto>>? GetByIdAsync(TPrimaryKey id, CancellationToken cancellationToken = default);
-        Task<Result<TEntityDto>> AddAsync(TCreateEntityDto entityDto, CancellationToken cancellationToken = default);
-        Task<Result<TEntityDto>> UpdateAsync(TEntityDto entityDto, CancellationToken cancellationToken = default);
+        Task<Result<TEntityDTO>>? GetByIdAsync(TPrimaryKey id, CancellationToken cancellationToken = default);
+        Task<Result<TEntityDTO>> AddAsync(TCreateEntityDTO entityDTO, CancellationToken cancellationToken = default);
+        Task<Result<TEntityDTO>> UpdateAsync(TEntityDTO entityDTO, CancellationToken cancellationToken = default);
         Task<Result<bool>> RemoveAsync(TPrimaryKey id, CancellationToken cancellationToken = default);
     }
 }

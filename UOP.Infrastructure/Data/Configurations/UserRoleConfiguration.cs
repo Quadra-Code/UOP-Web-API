@@ -8,7 +8,7 @@ namespace UOP.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<UserRole> entity)
         {
-            entity.ToTable("UserRole", "Core");
+            entity.ToTable("UserRole", "UserManagement");
             entity.HasKey(e => e.UserRoleId).HasName("PK_UserManagement.UserRole");
             entity.Property(e => e.UserRoleId)
                 .ValueGeneratedNever()

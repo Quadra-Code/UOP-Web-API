@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UOP.Application.Common.DTOs;
+using UOP.Application.Common.DTOs.User;
 using UOP.Domain.Entities;
 
 namespace UOP.Application.Common.Mappers
@@ -34,6 +35,16 @@ namespace UOP.Application.Common.Mappers
             TypeAdapterConfig<State, StateDTO>.NewConfig()
                 .Map(dest => dest.CountryName, src => src.Country.Name_En).TwoWays();
             TypeAdapterConfig<CreateStateDTO, State>.NewConfig().TwoWays();
+
+            // User Mappings
+            TypeAdapterConfig<AccountCreateDTO, User>.NewConfig()
+                .Map(dest => dest.PhoneNumber, src => src.PhoneNumberCode + src.PhoneNumber)
+                .Map(dest => dest.NormalizedEmail, src => src.Email.ToUpper())
+                .Map(dest => dest.UserName, src => string.Join("", src.Email.TakeWhile(e => e != '@')))
+                .Map(dest => dest.NormalizedUserName, src => string.Join("", src.Email.ToUpper().TakeWhile(e => e != '@')));
+
+            TypeAdapterConfig<UserDTO, LoginResponseDTO>.NewConfig();
+            //TypeAdapterConfig<CreateStateDTO, State>.NewConfig().TwoWays();
 
             //TypeAdapterConfig<ClientRegisterDTO, User>.NewConfig()
             //    .Map(dest => dest.NormalizedEmail, src => src.Email.ToUpper())

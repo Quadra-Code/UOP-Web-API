@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,10 +11,11 @@ using UOP.Domain.Interfaces;
 
 namespace UOP.Domain.Entities
 {
-    public class User : IdentityUser<Guid>, IEntity<Guid>
+    public class User : IdentityUser<Guid>, IAuditEntity<Guid>
     {
         public User() => UserId = UuidV7.NewGuid();
 
+        [NotMapped]
         public override Guid Id { get => UserId; set => UserId = value; }
 
         public Guid UserId { get; set; }
@@ -41,7 +43,7 @@ namespace UOP.Domain.Entities
 
         public bool IsDeleted { get; set; }
 
-        public virtual ICollection<UserRole>? UserRoles { get; set; }
-        public virtual ICollection<PhoneNumber>? PhoneNumbers { get; set; }
+        public virtual ICollection<UserRole>? UserRoles { get; set; } = [];
+        public virtual ICollection<PhoneNumber>? PhoneNumbers { get; set; } = [];
     }
 }

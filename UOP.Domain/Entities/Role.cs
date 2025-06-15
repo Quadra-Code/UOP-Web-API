@@ -1,15 +1,19 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UOP.Domain.Extensions;
 using UOP.Domain.Interfaces;
 
 namespace UOP.Domain.Entities
 {
     public class Role : IdentityRole<Guid>, IAuditEntity<Guid>
     {
+        public Role() => RoleId = UuidV7.NewGuid();
+        [NotMapped]
         public override Guid Id { get => RoleId; set => RoleId = value; }
         public Guid RoleId { get; set; }
         public override string? Name { get; set; }

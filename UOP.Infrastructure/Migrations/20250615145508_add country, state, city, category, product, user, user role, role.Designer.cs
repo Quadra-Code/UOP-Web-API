@@ -12,8 +12,8 @@ using UOP.Infrastructure.Data;
 namespace UOP.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250612051226_category, product, city, country, state, user, userrole, role")]
-    partial class categoryproductcitycountrystateuseruserrolerole
+    [Migration("20250615145508_add country, state, city, category, product, user, user role, role")]
+    partial class addcountrystatecitycategoryproductuseruserrolerole
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -238,9 +238,6 @@ namespace UOP.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -349,9 +346,6 @@ namespace UOP.Infrastructure.Migrations
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -482,9 +476,6 @@ namespace UOP.Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -561,9 +552,6 @@ namespace UOP.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -587,7 +575,7 @@ namespace UOP.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRole", "Core");
+                    b.ToTable("UserRole", "UserManagement");
                 });
 
             modelBuilder.Entity("UOP.Domain.Entities.Category", b =>

@@ -9,60 +9,60 @@ using UOP.Domain.Models;
 
 namespace UOP.Application.Common.Services
 {
-    public class GenericService<TEntity, TCreateEntityDto, TEntityDto, TPrimaryKey>(IRepository<TEntity, TPrimaryKey> repository, IUnitOfWork unitOfWork)
-        : IGenericService<TEntity, TCreateEntityDto, TEntityDto, TPrimaryKey>
+    public class GenericService<TEntity, TCreateEntityDTO, TEntityDTO, TPrimaryKey>(IRepository<TEntity, TPrimaryKey> repository, IUnitOfWork unitOfWork)
+        : IGenericService<TEntity, TCreateEntityDTO, TEntityDTO, TPrimaryKey>
     where TEntity : class, IEntity<TPrimaryKey>, new()
-    where TEntityDto : class, new()
-    where TCreateEntityDto : class, new()
+    where TEntityDTO : class, new()
+    where TCreateEntityDTO : class, new()
     where TPrimaryKey : struct
     {
         protected readonly IRepository<TEntity, TPrimaryKey> Repository = repository;
         protected readonly IUnitOfWork UnitOfWork = unitOfWork;
 
-        public virtual Result<IQueryable<TEntityDto>> GetAll(int pageNumber = 1, int pageSize = int.MaxValue, string orderBy = "Id", string orderDirection = "asc")
+        public virtual Result<IQueryable<TEntityDTO>> GetAll(int pageNumber = 1, int pageSize = int.MaxValue, string orderBy = "Id", string orderDirection = "asc")
         {
             try
             {
                 var entities = ApplyPaginationAndSorting(Repository.GetAll(), pageNumber, pageSize, orderBy, orderDirection);
-                return Result<IQueryable<TEntityDto>>.Success(entities);
+                return Result<IQueryable<TEntityDTO>>.Success(entities);
             }
             catch (Exception ex)
             {
-                return Result<IQueryable<TEntityDto>>.Failure(ex.Message);
+                return Result<IQueryable<TEntityDTO>>.Failure(ex.Message);
             }
         }
 
-        public virtual async Task<Result<PaginatedResponse<TEntityDto>>> GetAllAsync(int pageNumber = 1, int pageSize = int.MaxValue, string orderBy = "Id", string orderDirection = "asc", CancellationToken cancellationToken = default)
+        public virtual async Task<Result<PaginatedResponse<TEntityDTO>>> GetAllAsync(int pageNumber = 1, int pageSize = int.MaxValue, string orderBy = "Id", string orderDirection = "asc", CancellationToken cancellationToken = default)
         {
             try
             {
                 var query = Repository.GetAll();
                 var entities = ApplyPaginationAndSorting(query, pageNumber, pageSize, orderBy, orderDirection);
                 var totalCount = await query.CountAsync(cancellationToken);
-                return Result<PaginatedResponse<TEntityDto>>.Success(new PaginatedResponse<TEntityDto>(entities.ToList(), totalCount, pageNumber, pageSize));
+                return Result<PaginatedResponse<TEntityDTO>>.Success(new PaginatedResponse<TEntityDTO>(entities.ToList(), totalCount, pageNumber, pageSize));
             }
             catch (Exception ex)
             {
-                return Result<PaginatedResponse<TEntityDto>>.Failure(ex.Message);
+                return Result<PaginatedResponse<TEntityDTO>>.Failure(ex.Message);
             }
         }
 
-        public virtual Result<IQueryable<TEntityDto>> GetByFilter(Expression<Func<TEntity, bool>> filter, int pageNumber = 1, int pageSize = int.MaxValue, string orderBy = "Id", string orderDirection = "asc")
+        public virtual Result<IQueryable<TEntityDTO>> GetByFilter(Expression<Func<TEntity, bool>> filter, int pageNumber = 1, int pageSize = int.MaxValue, string orderBy = "Id", string orderDirection = "asc")
         {
             try
             {
                 var query = Repository.GetAll();
                 query = filter == null ? query : query.Where(filter);
                 var entities = ApplyPaginationAndSorting(query, pageNumber, pageSize, orderBy, orderDirection);
-                return Result<IQueryable<TEntityDto>>.Success(entities);
+                return Result<IQueryable<TEntityDTO>>.Success(entities);
             }
             catch (Exception ex)
             {
-                return Result<IQueryable<TEntityDto>>.Failure(ex.Message);
+                return Result<IQueryable<TEntityDTO>>.Failure(ex.Message);
             }
         }
 
-        public virtual async Task<Result<PaginatedResponse<TEntityDto>>> GetByFilterAsync(Expression<Func<TEntity, bool>>? filter, int pageNumber = 1, int pageSize = int.MaxValue, string orderBy = "Id", string orderDirection = "asc", CancellationToken cancellationToken = default)
+        public virtual async Task<Result<PaginatedResponse<TEntityDTO>>> GetByFilterAsync(Expression<Func<TEntity, bool>>? filter, int pageNumber = 1, int pageSize = int.MaxValue, string orderBy = "Id", string orderDirection = "asc", CancellationToken cancellationToken = default)
         {
             try
             {
@@ -72,36 +72,36 @@ namespace UOP.Application.Common.Services
                 var entities = ApplyPaginationAndSorting(query, pageNumber, pageSize, orderBy, orderDirection);
                 var totalCount = await query.CountAsync(cancellationToken);
 
-                return Result<PaginatedResponse<TEntityDto>>.Success(new PaginatedResponse<TEntityDto>(entities.ToList(), totalCount, pageNumber, pageSize));
+                return Result<PaginatedResponse<TEntityDTO>>.Success(new PaginatedResponse<TEntityDTO>(entities.ToList(), totalCount, pageNumber, pageSize));
             }
             catch (Exception ex)
             {
-                return Result<PaginatedResponse<TEntityDto>>.Failure(ex.Message);
+                return Result<PaginatedResponse<TEntityDTO>>.Failure(ex.Message);
             }
         }
 
-        public virtual async Task<Result<TEntityDto>> GetByIdAsync(TPrimaryKey id, CancellationToken cancellationToken = default)
+        public virtual async Task<Result<TEntityDTO>> GetByIdAsync(TPrimaryKey id, CancellationToken cancellationToken = default)
         {
             try
             {
                 var query = Repository.GetByIdQueryable(id);
-                var entity = await query.ProjectToType<TEntityDto>().FirstOrDefaultAsync(cancellationToken);
+                var entity = await query.ProjectToType<TEntityDTO>().FirstOrDefaultAsync(cancellationToken);
 
                 return entity is not null
-                    ? Result<TEntityDto>.Success(entity)
-                    : Result<TEntityDto>.Failure($"Entity with id {id} not found.");
+                    ? Result<TEntityDTO>.Success(entity)
+                    : Result<TEntityDTO>.Failure($"Entity with id {id} not found.");
             }
             catch (Exception ex)
             {
-                return Result<TEntityDto>.Failure(ex.Message);
+                return Result<TEntityDTO>.Failure(ex.Message);
             }
         }
 
-        public virtual async Task<Result<TEntityDto>> AddAsync(TCreateEntityDto entityDto, CancellationToken cancellationToken = default)
+        public virtual async Task<Result<TEntityDTO>> AddAsync(TCreateEntityDTO entityDTO, CancellationToken cancellationToken = default)
         {
             try
             {
-                var entity = entityDto.Adapt<TEntity>();
+                var entity = entityDTO.Adapt<TEntity>();
 
                 if (typeof(TPrimaryKey) == typeof(Guid))
                 {
@@ -132,39 +132,39 @@ namespace UOP.Application.Common.Services
                 await UnitOfWork.SaveChangesAsync(cancellationToken);
 
                 var query = Repository.GetByIdQueryable(entity);
-                var createdEntity = await query.ProjectToType<TEntityDto>().FirstOrDefaultAsync(cancellationToken);
+                var createdEntity = await query.ProjectToType<TEntityDTO>().FirstOrDefaultAsync(cancellationToken);
 
-                return Result<TEntityDto>.Success(createdEntity);
+                return Result<TEntityDTO>.Success(createdEntity);
             }
             catch (Exception ex)
             {
-                return Result<TEntityDto>.Failure(ex.Message);
+                return Result<TEntityDTO>.Failure(ex.Message);
             }
         }
 
-        public virtual async Task<Result<TEntityDto>> UpdateAsync(TEntityDto entityDto, CancellationToken cancellationToken = default)
+        public virtual async Task<Result<TEntityDTO>> UpdateAsync(TEntityDTO entityDTO, CancellationToken cancellationToken = default)
         {
             try
             {
-                var existingEntity = await Repository.GetByIdAsync((TPrimaryKey)(entityDto.GetType().GetProperty("Id")?.GetValue(entityDto) ?? throw new InvalidOperationException()), cancellationToken);
+                var existingEntity = await Repository.GetByIdAsync((TPrimaryKey)(entityDTO.GetType().GetProperty("Id")?.GetValue(entityDTO) ?? throw new InvalidOperationException()), cancellationToken);
 
                 if (existingEntity == null)
                 {
-                    return Result<TEntityDto>.Failure($"Entity with id {entityDto.GetType().GetProperty("Id")?.GetValue(entityDto)} not found.");
+                    return Result<TEntityDTO>.Failure($"Entity with id {entityDTO.GetType().GetProperty("Id")?.GetValue(entityDTO)} not found.");
                 }
 
-                entityDto.Adapt(existingEntity);
+                entityDTO.Adapt(existingEntity);
 
                 await Repository.UpdateAsync(existingEntity, cancellationToken);
                 await UnitOfWork.SaveChangesAsync(cancellationToken);
                 var updatedEntity = await Repository.GetByIdQueryable(existingEntity.Id)
-                   .ProjectToType<TEntityDto>()
+                   .ProjectToType<TEntityDTO>()
                    .FirstOrDefaultAsync(cancellationToken);
-                return Result<TEntityDto>.Success(updatedEntity);
+                return Result<TEntityDTO>.Success(updatedEntity);
             }
             catch (Exception ex)
             {
-                return Result<TEntityDto>.Failure(ex.Message);
+                return Result<TEntityDTO>.Failure(ex.Message);
             }
         }
 
@@ -189,7 +189,7 @@ namespace UOP.Application.Common.Services
             }
         }
 
-        private IQueryable<TEntityDto> ApplyPaginationAndSorting(IQueryable<TEntity> entities, int pageNumber, int pageSize, string orderBy, string orderDirection)
+        private IQueryable<TEntityDTO> ApplyPaginationAndSorting(IQueryable<TEntity> entities, int pageNumber, int pageSize, string orderBy, string orderDirection)
         {
             var propertyInfo = typeof(TEntity).GetProperty(orderBy, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
             if (propertyInfo is not null)
@@ -211,7 +211,7 @@ namespace UOP.Application.Common.Services
                 entities = entities.Take(pageSize);
             }
 
-            return entities.ProjectToType<TEntityDto>();
+            return entities.ProjectToType<TEntityDTO>();
         }
     }
 }

@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UOP.Domain.Interfaces;
 
-namespace UOP.Application.Common.DTOs
+namespace UOP.Application.Common.DTOs.User
 {
-    public class UserDto : IEntity<Guid>
+    public class UserDTO : IAuditEntity<Guid>
     {
         //this should be mapping for User Entity
         public Guid Id { get { return UserId; } set { UserId = value; } }
@@ -30,15 +30,23 @@ namespace UOP.Application.Common.DTOs
 
         public string? UserPictureUrl { get; set; }
 
-        public Guid? GenderId { get; set; }
+        public string? UpdatedBy { get; set; }
 
-        public Guid IdentitySourceId { get; set; }
-
-        public bool? IsPublicProfile { get; set; }
+        public DateTime? UpdatedDate { get; set; }
 
         public string CreatedBy { get; set; }
 
-        public Guid? EmployeeId { get; set; }
+        public DateTime CreatedDate { get; set; }
+
+        public bool IsDeleted { get; set; }
+
+        //public Guid? GenderId { get; set; }
+
+        //public Guid IdentitySourceId { get; set; }
+
+        //public bool? IsPublicProfile { get; set; }
+
+        //public Guid? EmployeeId { get; set; }
 
     }
 }

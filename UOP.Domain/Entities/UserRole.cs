@@ -1,15 +1,19 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UOP.Domain.Extensions;
 using UOP.Domain.Interfaces;
 
 namespace UOP.Domain.Entities
 {
     public class UserRole : IdentityUserRole<Guid>, IAuditEntity<Guid>
     {
+        public UserRole() => UserRoleId = UuidV7.NewGuid();
+        [NotMapped]
         public Guid Id { get => UserRoleId; set => UserRoleId = value; }
         public Guid UserRoleId { get; set; }
         public Role? Role { get; set; }
