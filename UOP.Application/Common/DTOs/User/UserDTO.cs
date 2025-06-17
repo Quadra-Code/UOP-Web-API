@@ -12,8 +12,6 @@ namespace UOP.Application.Common.DTOs.User
         //this should be mapping for User Entity
         public Guid Id { get { return UserId; } set { UserId = value; } }
 
-        //public string PrimaryKeyName => nameof(UserId);
-
         public Guid UserId { get; set; }
 
         public string UserName { get; set; }

@@ -12,7 +12,7 @@ namespace UOP.Application.Interfaces
 {
     public interface IAccountService : IGenericService<User, AccountCreateDTO, UserDTO, Guid>
     {
-        Task<Result<UserDTO>> CreateAdminAsync(CreateAdminDTO entityDTO);
+        Task<Result<UserDTO>> CreateStaffAsync(CreateStaffDTO entityDTO, string creatorName);
         Task<Result<UserDTO>> LoginAsync(AccountLoginDTO entityDTO);
     }
 }

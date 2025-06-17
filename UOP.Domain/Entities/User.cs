@@ -25,7 +25,13 @@ namespace UOP.Domain.Entities
 
         public override string? Email { get; set; }
 
+        public string PhoneNumberCode { get; set; }
+
+        public override string? PhoneNumber { get; set; }
+
         public bool IsActive { get; set; }
+
+        public bool IsStaff { get; set; }
 
         public string? PictureUrl { get; set; }
 
@@ -45,5 +51,6 @@ namespace UOP.Domain.Entities
 
         public virtual ICollection<UserRole>? UserRoles { get; set; } = [];
         public virtual ICollection<PhoneNumber>? PhoneNumbers { get; set; } = [];
+        public virtual ICollection<Address>? Addresses { get; set; } = [];
     }
 }

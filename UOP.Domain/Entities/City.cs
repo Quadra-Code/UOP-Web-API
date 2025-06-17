@@ -36,6 +36,6 @@ namespace UOP.Domain.Entities
         public bool IsDeleted { get; set; }
 
         public virtual State State { get; set; } = null!;
-        //public virtual ICollection<CustomerContact> CustomerContacts { get; set; } = new List<CustomerContact>();
+        public virtual ICollection<Address> Addresses { get; set; } = new List<Address>();
     }
 }

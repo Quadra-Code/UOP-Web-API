@@ -15,8 +15,8 @@ namespace UOP.Infrastructure
                 .Build();
             var builder = new DbContextOptionsBuilder<AppDbContext>();
             //var connectionString = configuration.GetConnectionString("LocalConnection");
-            //var connectionString = configuration.GetConnectionString("RemoteConnection");
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            var connectionString = configuration.GetConnectionString("RemoteConnection");
+            //var connectionString = configuration.GetConnectionString("DefaultConnection");
             builder.UseSqlServer(connectionString);
             return new AppDbContext(builder.Options);
         }
