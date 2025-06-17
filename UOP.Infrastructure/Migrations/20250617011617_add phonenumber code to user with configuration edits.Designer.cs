@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UOP.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using UOP.Infrastructure.Data;
 namespace UOP.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250617011617_add phonenumber code to user with configuration edits")]
+    partial class addphonenumbercodetouserwithconfigurationedits
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,73 +24,6 @@ namespace UOP.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("UOP.Domain.Entities.Address", b =>
-                {
-                    b.Property<Guid>("AddressId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("AddressID");
-
-                    b.Property<string>("AddressLine1")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<string>("AddressLine2")
-                        .HasMaxLength(400)
-                        .HasColumnType("nvarchar(400)");
-
-                    b.Property<string>("AppartmentNumber")
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
-
-                    b.Property<Guid>("CityId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FloorNumber")
-                        .HasMaxLength(3)
-                        .HasColumnType("nvarchar(3)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsMain")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("PostalCode")
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("AddressId")
-                        .HasName("PK_UserManagement.Address");
-
-                    b.HasIndex("CityId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Address", "UserManagement");
-                });
 
             modelBuilder.Entity("UOP.Domain.Entities.Category", b =>
                 {
@@ -647,27 +583,6 @@ namespace UOP.Infrastructure.Migrations
                     b.ToTable("UserRole", "UserManagement");
                 });
 
-            modelBuilder.Entity("UOP.Domain.Entities.Address", b =>
-                {
-                    b.HasOne("UOP.Domain.Entities.City", "City")
-                        .WithMany("Addresses")
-                        .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_Address_City");
-
-                    b.HasOne("UOP.Domain.Entities.User", "User")
-                        .WithMany("Addresses")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_Address_User");
-
-                    b.Navigation("City");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("UOP.Domain.Entities.Category", b =>
                 {
                     b.HasOne("UOP.Domain.Entities.Category", null)
@@ -752,11 +667,6 @@ namespace UOP.Infrastructure.Migrations
                     b.Navigation("SubCategories");
                 });
 
-            modelBuilder.Entity("UOP.Domain.Entities.City", b =>
-                {
-                    b.Navigation("Addresses");
-                });
-
             modelBuilder.Entity("UOP.Domain.Entities.Country", b =>
                 {
                     b.Navigation("States");
@@ -774,8 +684,6 @@ namespace UOP.Infrastructure.Migrations
 
             modelBuilder.Entity("UOP.Domain.Entities.User", b =>
                 {
-                    b.Navigation("Addresses");
-
                     b.Navigation("PhoneNumbers");
 
                     b.Navigation("UserRoles");

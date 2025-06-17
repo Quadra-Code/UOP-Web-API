@@ -22,7 +22,8 @@ namespace UOP.Infrastructure.Data.Configurations
             entity.Property(e => e.UpdatedBy).HasMaxLength(100);
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.NormalizedEmail).HasMaxLength(100);
-            entity.Property(e => e.PhoneNumber).HasMaxLength(100);
+            entity.Property(e => e.PhoneNumberCode).HasMaxLength(5);
+            entity.Property(e => e.PhoneNumber).HasMaxLength(15);
             entity.Property(e => e.PictureUrl).HasMaxLength(500);
             entity.Property(e => e.CoverPhotoUrl).HasMaxLength(500);
             entity.Property(e => e.UserPictureUrl).HasMaxLength(500);
@@ -38,6 +39,12 @@ namespace UOP.Infrastructure.Data.Configurations
                 .HasForeignKey(ur => ur.UserId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("FK_PhoneNumber_User");
+
+            entity.HasMany(c => c.Addresses)
+                .WithOne(c => c.User)
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_Address_User");
         }
     }
 }

@@ -24,24 +24,47 @@ namespace UOP.Web.API.Controllers.User_Profile
             configuration = _configuration;
         }
 
+        [Authorize(Roles = "SuperUser,Manager,Admin")]
+        [HttpPost("Create-Staff")]
+        public async Task<IActionResult> CreateStaff(CreateStaffDTO createStaffDTO)
+        {
+            if (ModelState.IsValid)
+            {
+                var userFullName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? "";
+                var result = await accountService.CreateStaffAsync(createStaffDTO, userFullName);
+                if (result.IsSuccess)
+                {
+                    return CreatedAtAction(nameof(CreateStaff), new { id = result.Value.Id }, result.Value);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+            return BadRequest(errors);
+        }
+
         [HttpPost("Login")]
         public async Task<IActionResult> Login(AccountLoginDTO accountLoginDTO)
         {
             var loginResult = await accountService.LoginAsync(accountLoginDTO);
             if (loginResult.IsSuccess)
             {
-                List<Claim> claims = new List<Claim>()
-               {
-                   new(ClaimTypes.Email, accountLoginDTO.Email),
-                   new(ClaimTypes.PrimarySid, loginResult.Value.Id.ToString()),
-               };
+                List<Claim> claims =
+                [
+                    new(ClaimTypes.Name, loginResult.Value?.FullName ?? ""),
+                    new(ClaimTypes.Email, loginResult.Value?.Email ?? ""),
+                    new(ClaimTypes.PrimarySid, loginResult.Value?.Id.ToString() ?? ""),
+                ];
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["jwt:key"]));
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["jwt:key"] ?? ""));
                 var token = new JwtSecurityToken(
                     issuer: configuration["jwt:Issuer"],
                     audience: configuration["jwt:Audience"],
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(15), // Short-lived access token  
+                    expires: DateTime.Now.AddDays(15), // Short-lived access token  
+                    //expires: DateTime.Now.AddMinutes(15), // Short-lived access token  
                     signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
                 );
                 string accessToken = new JwtSecurityTokenHandler().WriteToken(token);

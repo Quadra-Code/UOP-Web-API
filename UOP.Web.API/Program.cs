@@ -14,6 +14,7 @@ using UOP.Infrastructure.Repositories;
 using UOP.Web.API.Attributes;
 using Microsoft.OpenApi.Models;
 using UOP.Application.Interfaces;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace UOP.Web.API
 {
@@ -24,6 +25,79 @@ namespace UOP.Web.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            
+            // Configure Mapster
+            MapsterConfig.Configure();
+
+            builder.Services.AddIdentity<User, Role>(options =>
+            {
+                options.SignIn.RequireConfirmedEmail = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireConfirmedEmail");
+                options.Password.RequireDigit = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireDigit");
+                options.Password.RequiredLength = builder.Configuration.GetValue<int>("PasswordRequirements:MinimumLength");
+                options.Password.RequireNonAlphanumeric = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireSpecialCharacter");
+                options.Password.RequireUppercase = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireUppercase");
+                options.Password.RequireLowercase = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireLowercase");
+                options.User.RequireUniqueEmail = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireUniqueEmail");
+            })
+            .AddRoles<Role>()
+            .AddEntityFrameworkStores<AppDbContext>();
+
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IAccountService, AccountService>();
+
+            //builder.Services.AddScoped(typeof(IPermissionService), typeof(PermissionService));
+
+            builder.Services.AddScoped(typeof(IGenericService<,,,>), typeof(GenericService<,,,>));
+            builder.Services.AddScoped(typeof(ILookupService<>), typeof(LookupService<>));
+            builder.Services.AddResponseCaching(options =>
+            {
+                options.MaximumBodySize = 64 * 1024 * 1024; // 64MB
+                options.UseCaseSensitivePaths = false;
+            });
+            var envConnectString = Environment.GetEnvironmentVariable("SQLAZURECONNSTR_DefaultConnection");
+            if (string.IsNullOrEmpty(envConnectString))
+            {
+                //envConnectString = builder.Configuration.GetConnectionString("LocalConnection");
+                envConnectString = builder.Configuration.GetConnectionString("RemoteConnection");
+                //envConnectString = builder.Configuration.GetConnectionString("DefaultConnection");
+            }
+            builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(envConnectString).EnableDetailedErrors(true), ServiceLifetime.Scoped);
+
+            // Add OpenAPI and Swagger configurations
+            builder.Services.AddSwaggerGen(sa =>
+            {
+                sa.SwaggerDoc("v1", new OpenApiInfo //here the name (v1) must be (v1) small and there is no relation with the version below
+                {
+                    Title = "Upping Online Pharma API",
+                    Version = "v1"
+                });
+                sa.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please Insert JWT with Bearer Into Field",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+                });
+                sa.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
+            });
+
+            // Add Authentication and Authorization
             builder.Services.AddAuthentication(op =>
             {
                 op.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -42,6 +116,7 @@ namespace UOP.Web.API
                 };
             });
 
+            // Add CORS policies
             builder.Services.AddCors(op =>
             {
                 op.AddPolicy("Default", policy =>
@@ -61,190 +136,34 @@ namespace UOP.Web.API
                 });
             });
 
-            // Configure Mapster
-            MapsterConfig.Configure();
-
+            // Add Controllers
             builder.Services.AddControllers(options =>
             {
                 options.Conventions.Add(new DefaultProducesResponseTypeConvention());
             });
 
-            builder.Services.AddIdentity<User, Role>(options =>
-            {
-                options.SignIn.RequireConfirmedEmail = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireConfirmedEmail");
-                options.Password.RequireDigit = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireDigit");
-                options.Password.RequiredLength = builder.Configuration.GetValue<int>("PasswordRequirements:MinimumLength");
-                options.Password.RequireNonAlphanumeric = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireSpecialCharacter");
-                options.Password.RequireUppercase = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireUppercase");
-                options.Password.RequireLowercase = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireLowercase");
-                options.User.RequireUniqueEmail = builder.Configuration.GetValue<bool>("PasswordRequirements:RequireUniqueEmail");
-            })
-            .AddRoles<Role>()
-            .AddEntityFrameworkStores<AppDbContext>();
-
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
-
-            // Here i used to use the following configuration in .net 8 and before to add authentication and authorization in swagger interface, so how can i do the same in .net 9 and above for both swagger and scalar ?
-            //builder.Services.AddSwaggerGen(sa =>
-            //{
-            //    sa.SwaggerDoc("v1", new OpenApiInfo //here the name (v1) must be (v1) small ant there is no relation with the version below
-            //    {
-            //        Title = "Client API",
-            //        Version = "v1"
-            //    });
-            //    sa.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-            //    {
-            //        In = ParameterLocation.Header,
-            //        Description = "Please Insert JWT with Bearer Into Field",
-            //        Name = "Authorization",
-            //        Type = SecuritySchemeType.ApiKey
-            //    });
-            //    sa.AddSecurityRequirement(new OpenApiSecurityRequirement
-            //    {
-            //        {
-            //            new OpenApiSecurityScheme
-            //            {
-            //                Reference = new OpenApiReference
-            //                {
-            //                    Id = "Bearer",
-            //                    Type = ReferenceType.SecurityScheme
-            //                }
-            //            },
-            //            new string[] { }
-            //        }
-            //    });
-            //});
-
-            // For Scalar configuration
-            //builder.Services.AddScalar(options =>
-            //{
-            //    options.SpecUrl = "/swagger/v1/swagger.json";
-            //    options.Config = new ScalarConfig
-            //    {
-            //        Authentication = new ScalarAuthentication
-            //        {
-            //            Default = new ScalarAuthenticationDefault
-            //            {
-            //                Type = "http",
-            //                Scheme = "bearer"
-            //            }
-            //        }
-            //    };
-            //});
-
-            //builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(setup =>
-            {
-                // Include 'SecurityScheme' to use JWT Authentication
-                var jwtSecurityScheme = new OpenApiSecurityScheme
-                {
-                    BearerFormat = "JWT",
-                    Name = "JWT Authentication",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.Http,
-                    Scheme = JwtBearerDefaults.AuthenticationScheme,
-                    Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
-
-                    Reference = new OpenApiReference
-                    {
-                        Id = JwtBearerDefaults.AuthenticationScheme,
-                        Type = ReferenceType.SecurityScheme
-                    }
-                };
-
-                setup.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
-                setup.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    { jwtSecurityScheme, Array.Empty<string>() }
-                });
-                setup.AddSecurityDefinition("Tenant", new OpenApiSecurityScheme
-                {
-                    Name = "Tenant",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey,
-                    Description = "Enter the Tenant header value",
-                    Scheme = "Tenant"
-                });
-                setup.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Tenant"
-                            },
-                            In = ParameterLocation.Header
-                        },
-                        new List<string>()
-                    }
-                });
-
-                // Tell Swagger to Use XML Comments
-                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                //setup.IncludeXmlComments(xmlPath);
-
-
-            });
-
-            //builder.Services.AddOpenApi(options =>
-            //{
-            //    options.UseApiEndpoint("/openapi/v1.json");
-
-            //    // Add JWT Bearer security definition
-            //    options.AddSecurityScheme("Bearer", new()
-            //    {
-            //        Type = "http",
-            //        Scheme = "bearer",
-            //        BearerFormat = "JWT",
-            //        Description = "JWT Authorization header using the Bearer scheme."
-            //    });
-
-            //    options.OperationFilter<AuthResponsesOperationFilter>();
-            //});
-
-            builder.Services.AddHttpContextAccessor();
-            builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
-            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-            builder.Services.AddScoped<IAccountService, AccountService>();
-            //builder.Services.AddScoped(typeof(IPermissionService), typeof(PermissionService));
-
-
-            builder.Services.AddScoped(typeof(IGenericService<,,,>), typeof(GenericService<,,,>));
-            builder.Services.AddScoped(typeof(ILookupService<>), typeof(LookupService<>));
-            builder.Services.AddResponseCaching(options =>
-            {
-                options.MaximumBodySize = 64 * 1024 * 1024; // 64MB
-                options.UseCaseSensitivePaths = false;
-            });
-            var envConnectString = Environment.GetEnvironmentVariable("SQLAZURECONNSTR_DefaultConnection");
-            if (string.IsNullOrEmpty(envConnectString))
-            {
-                //envConnectString = builder.Configuration.GetConnectionString("LocalConnection");
-                //envConnectString = builder.Configuration.GetConnectionString("RemoteConnection");
-                envConnectString = builder.Configuration.GetConnectionString("DefaultConnection");
-            }
-            builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(envConnectString).EnableDetailedErrors(true), ServiceLifetime.Scoped);
-
-
-            //builder.Services.AddControllers(options =>
-            //{
-            //    options.Filters.Add<AuthorizeFilter>();
-            //});
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             //if (app.Environment.IsDevelopment())
             //{
                 app.MapOpenApi();
+                //app.MapGet("/openapi/v1.json", () => app.Services.GetRequiredService<ISwaggerProvider>().GetSwagger("v1"));
+                //app.MapGet("/openapi/v1.json", () => Results.Json(app.Services.GetRequiredService<ISwaggerProvider>().GetSwagger("v1")) );
+                app.MapGet("/openapi/v1.json", () => Results.Redirect("/swagger/v1/swagger.json") );
                 app.MapScalarApiReference();
+                
+            //    app.UseSwagger();
+            //app.UseSwaggerUI(options => options.SwaggerEndpoint(url: "/openapi/v1.json", name: "V1"));
                 app.UseSwagger();
-                app.UseSwaggerUI(options => options.SwaggerEndpoint(url: "/openapi/v1.json", name: "V1"));
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+                    c.RoutePrefix = string.Empty;  // Optional: Use empty string to serve Swagger at the root
+                });
+
             //}
+
             app.UseHttpsRedirection();
             app.UseCors("Default");
 
@@ -253,21 +172,6 @@ namespace UOP.Web.API
             app.UseAuthentication();
             app.UseAuthorization();
             
-            //app.UseScalarApiReference(options =>
-            //{
-            //    options.SpecUrl = "/openapi/v1.json";
-            //    options.ConfigObject = new ScalarConfigObject
-            //    {
-            //        Authentication = new ScalarAuthenticationConfig
-            //        {
-            //            Default = new ScalarAuthenticationDefaultConfig
-            //            {
-            //                Type = "http",
-            //                Scheme = "bearer"
-            //            }
-            //        }
-            //    };
-            //});
             app.UseResponseCaching();
             app.MapControllers();
 

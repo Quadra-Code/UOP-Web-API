@@ -28,6 +28,12 @@ namespace UOP.Infrastructure.Data.Configurations
                 .HasForeignKey(c => c.StateId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("FK_City_State");
+
+            entity.HasMany(c => c.Addresses)
+                .WithOne(c => c.City)
+                .HasForeignKey(c => c.CityId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_Address_City");
         }
     }
 }

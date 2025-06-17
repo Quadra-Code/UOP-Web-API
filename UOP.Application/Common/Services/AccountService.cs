@@ -22,24 +22,122 @@ namespace UOP.Application.Common.Services
             this.roleManager = roleManager;
         }
 
-        public Task<Result<UserDTO>> CreateAdminAsync(CreateAdminDTO createAdminDTO)
+        public async Task<Result<UserDTO>> CreateStaffAsync(CreateStaffDTO entityDTO, string creatorName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Expression<Func<User, bool>> filters = u =>
+                (entityDTO.Email == null || u.Email == entityDTO.Email) &&
+                (entityDTO.PhoneNumber == null || u.PhoneNumber == entityDTO.PhoneNumber) &&
+                (entityDTO.PhoneNumberCode == null || u.PhoneNumberCode == entityDTO.PhoneNumberCode);
+
+                var sameUser = await Repository.GetAll().Include(u => u.UserRoles)!.ThenInclude(u => u.Role).FirstOrDefaultAsync(filters);
+                if (sameUser is not null)
+                {
+                    // check if the user is client only then add to his roles else failure
+                    if (sameUser.UserRoles!.Count == 1 && sameUser.UserRoles.Any(ur => ur.Role!.Name == "Client"))
+                    {
+                        foreach (var roleId in entityDTO.RoleIds)
+                        {
+                            sameUser.UserRoles?.Add(new UserRole
+                            {
+                                RoleId = roleId,
+                                CreatedBy = "System",
+                                CreatedDate = DateTime.Now,
+                                UpdatedBy = "System",
+                                UpdatedDate = DateTime.Now,
+                            });
+                        }
+                        sameUser.UpdatedBy = creatorName;
+                        sameUser.UpdatedDate = DateTime.Now;
+                        await UnitOfWork.SaveChangesAsync();
+                        return Result<UserDTO>.Success(sameUser.Adapt<UserDTO>());
+                    }
+                    return Result<UserDTO>.Failure("Staff with same email or phone number already exists");
+                }
+                var newStaff = entityDTO.Adapt<User>();
+                newStaff.CreatedBy = creatorName;
+                newStaff.CreatedDate = DateTime.Now;
+                newStaff.UpdatedBy = creatorName;
+                newStaff.UpdatedDate = DateTime.Now;
+                newStaff.IsActive = true;
+
+                foreach (var roleId in entityDTO.RoleIds)
+                {
+                    newStaff.UserRoles?.Add(new UserRole
+                    {
+                        RoleId = roleId,
+                        CreatedBy = "System",
+                        CreatedDate = DateTime.Now,
+                        UpdatedBy = "System",
+                        UpdatedDate = DateTime.Now,
+                    });
+                }
+
+                newStaff.PhoneNumbers?.Add(new PhoneNumber
+                {
+                    Code = entityDTO.PhoneNumberCode,
+                    Number = entityDTO.PhoneNumber,
+                    IsActive = true,
+                    CreatedBy = "System",
+                    CreatedDate = DateTime.Now,
+                    UpdatedBy = "System",
+                    UpdatedDate = DateTime.Now
+                });
+                var createResult = await userManager.CreateAsync(newStaff, "Aa123#");
+                if (createResult.Succeeded)
+                {
+                    return Result<UserDTO>.Success(newStaff.Adapt<UserDTO>());
+                }
+                else
+                {
+                    var errors = createResult.Errors.Select(e => e.Description).ToArray();
+                    return Result<UserDTO>.Failure(errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Result<UserDTO>.Failure(ex.Message);
+            }
         }
 
+        // Login client account
         public async Task<Result<UserDTO>> LoginAsync(AccountLoginDTO accountLoginDTO)
         {
             try
             {
-                var user = await userManager.FindByEmailAsync(accountLoginDTO.Email);
+
+                //if (accountLoginDTO.PhoneNumberCode == "+20")
+                //{
+                //    accountLoginDTO.PhoneNumberCode = "+2";
+                //    accountLoginDTO.PhoneNumber = $"0{entityDTO.PhoneNumber}";
+                //}
+
+
+                Expression<Func<User, bool>> filters = u =>
+                    u.Email == accountLoginDTO.EmailOrPhone ||
+                    u.PhoneNumber == (u.PhoneNumberCode!.StartsWith("+20") ? accountLoginDTO.EmailOrPhone.Substring(2) : accountLoginDTO.EmailOrPhone) &&
+                    u.UserRoles!.Any(ur => ur.Role!.Name == "Client");
+
+                var user = await Repository.GetAll().FirstOrDefaultAsync(filters);
+                
+                var fakePasswordCheck = Task.Delay(500); // Simulate password check delay  
+
                 if (user is not null)
                 {
-                    var result = await userManager.CheckPasswordAsync(user, accountLoginDTO.Password);
-                    if (result)
+                    var passwordCheck = userManager.CheckPasswordAsync(user, accountLoginDTO.Password);
+                    await Task.WhenAll(fakePasswordCheck, passwordCheck);
+
+                    if (passwordCheck.Result)
                     {
                         return Result<UserDTO>.Success(user.Adapt<UserDTO>());
                     }
                 }
+                else
+                {
+                    await fakePasswordCheck; // Ensure consistent delay even if user is not found  
+                }
+
                 return Result<UserDTO>.Failure("Login Failed. Invalid Credentials");
             }
             catch (Exception ex)
@@ -55,12 +153,13 @@ namespace UOP.Application.Common.Services
             {
                 Expression<Func<User, bool>> filters = u =>
                 (entityDTO.Email == null || u.Email == entityDTO.Email) &&
-                (u.PhoneNumber == $"{entityDTO.PhoneNumberCode}{entityDTO.PhoneNumber}");
+                (u.PhoneNumberCode == entityDTO.PhoneNumberCode && u.PhoneNumber == entityDTO.PhoneNumber);
                 var sameEmailUser = await Repository.GetAll().FirstOrDefaultAsync(filters, cancellationToken: cancellationToken);
                 if (sameEmailUser is not null)
                 {
                     return Result<UserDTO>.Failure("This Email or Phone is already registered. Please Sign In.");
                 }
+
                 var newUser = entityDTO.Adapt<User>();
                 newUser.CreatedBy = "System";
                 newUser.CreatedDate = DateTime.Now;
@@ -95,13 +194,9 @@ namespace UOP.Application.Common.Services
                     UpdatedBy = "System",
                     UpdatedDate = DateTime.Now
                 });
-                //await Repository.AddAsync(newUser, cancellationToken);
-                //await userManager.AddToRoleAsync(newUser, clientRole.Name!);
                 var createResult = await userManager.CreateAsync(newUser, entityDTO.Password);
                 if (createResult.Succeeded)
                 {
-                //await UnitOfWork.SaveChangesAsync(cancellationToken);
-                //await base.AddAsync(entityDTO, cancellationToken);
                     return Result<UserDTO>.Success(newUser.Adapt<UserDTO>());
                 }
                 else
