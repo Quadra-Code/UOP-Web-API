@@ -31,7 +31,7 @@ namespace UOP.Domain.Entities
         public string? Description { get; set; }
         
         public bool IsActive { get; set; }
-                
-        public virtual Category? Category { get; set; }
+
+        public virtual Category Category { get; set; } = null!;
     }
 }
