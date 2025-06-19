@@ -14,7 +14,7 @@ namespace UOP.Domain.Models
         public int PageSize { get; set; }
         public int TotalPages { get; set; }
         public bool HasPreviousPage => PageNumber > 1;
-        public bool HasNectPage => PageNumber < TotalPages;
+        public bool HasNextPage => PageNumber < TotalPages;
 
         public PaginatedResponse(IEnumerable<T> items, int totalCount, int pageNumber, int pageSize)
         {

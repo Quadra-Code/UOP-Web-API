@@ -15,7 +15,9 @@ namespace UOP.Application.Common.Mappers
         public static void Configure()
         {
             // Category Mappings
-            TypeAdapterConfig<Category, CategoryDTO>.NewConfig().TwoWays();
+            TypeAdapterConfig<Category, CategoryDTO>.NewConfig().TwoWays()
+                .Map(dest => dest.ParentName_Ar, src => src.ParentCategory.Name_Ar)
+                .Map(dest => dest.ParentName_En, src => src.ParentCategory.Name_En);
             TypeAdapterConfig<Category, CreateCategoryDTO>.NewConfig().TwoWays();
 
             // City Mappings

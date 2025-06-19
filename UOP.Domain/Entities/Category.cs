@@ -28,16 +28,20 @@ namespace UOP.Domain.Entities
         
         public Guid? ParentId { get; set; }
         
-        public string? Description { get; set; }
+        public string? Description_Ar { get; set; }
+        
+        public string? Description_En { get; set; }
 
         public bool IsActive { get; set; } = true;
 
         public bool IsParent { get; set; } = false;
         
         public string? IconUrl { get; set; }
+
+        public virtual Category ParentCategory { get; set; } = null!;
+
+        public virtual ICollection<Category> SubCategories { get; set; } = [];
         
-        public virtual ICollection<Category>? SubCategories { get; set; } = [];
-        
-        public virtual ICollection<Product>? Products { get; set; } = [];
+        public virtual ICollection<Product> Products { get; set; } = [];
     }
 }

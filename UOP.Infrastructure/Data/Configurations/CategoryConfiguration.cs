@@ -19,13 +19,14 @@ namespace UOP.Infrastructure.Data.Configurations
             entity.Property(e => e.Name_En).HasMaxLength(100);
             entity.Property(e => e.CreatedBy).HasMaxLength(100);
             entity.Property(e => e.UpdatedBy).HasMaxLength(100);
-            entity.Property(e => e.Description).HasMaxLength(800);
+            entity.Property(e => e.Description_Ar).HasMaxLength(2000);
+            entity.Property(e => e.Description_En).HasMaxLength(2000);
             entity.Property(e => e.IconUrl).HasMaxLength(500);
             entity.Property(e => e.Order).HasMaxLength(10);
             entity.Property(e => e.Order).HasColumnName("Order");
             entity.HasIndex(e => e.Order);
 
-            entity.HasOne<Category>()
+            entity.HasOne(c => c.ParentCategory)
                 .WithMany(c => c.SubCategories)
                 .HasForeignKey(c => c.ParentId)
                 .OnDelete(DeleteBehavior.Restrict)
